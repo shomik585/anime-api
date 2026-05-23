@@ -10,16 +10,20 @@ app.get("/", (req, res) => res.json({ msg: "Server is up and running" }));
 app.get("/search", async (req, res) => {
   try {
     const q = req.query.q as string;
-    const data = await hianime.search(q);
+    const data = await hianime.search(q, 1);
     res.json(data);
-  } catch (e) { res.status(500).json({ error: "failed" }); }
+  } catch (e) { 
+    res.status(500).json({ error: String(e) }); 
+  }
 });
 
 app.get("/episodes/:animeId", async (req, res) => {
   try {
     const data = await hianime.getEpisodes(req.params.animeId);
     res.json(data);
-  } catch (e) { res.status(500).json({ error: "failed" }); }
+  } catch (e) { 
+    res.status(500).json({ error: String(e) }); 
+  }
 });
 
 app.get("/sources", async (req, res) => {
@@ -27,7 +31,9 @@ app.get("/sources", async (req, res) => {
     const id = req.query.id as string;
     const data = await hianime.getEpisodeSources(id, "hd-1", "sub");
     res.json(data);
-  } catch (e) { res.status(500).json({ error: "failed" }); }
+  } catch (e) { 
+    res.status(500).json({ error: String(e) }); 
+  }
 });
 
 app.listen(PORT, () => console.log(`Running on ${PORT}`));
