@@ -36,4 +36,13 @@ app.get("/sources", async (req, res) => {
   }
 });
 
+app.get("/test", async (req, res) => {
+  try {
+    const response = await fetch("https://hianimez.to");
+    res.json({ status: response.status, ok: response.ok });
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
 app.listen(PORT, () => console.log(`Running on ${PORT}`));
