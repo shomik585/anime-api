@@ -54,4 +54,9 @@ app.get("/test2", async (req, res) => {
   }
 });
 
+app.get("/version", (req, res) => {
+  const pkg = require("/app/node_modules/aniwatch/package.json");
+  res.json({ version: pkg.version });
+});
+
 app.listen(PORT, () => console.log(`Running on ${PORT}`));
