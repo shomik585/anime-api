@@ -45,4 +45,13 @@ app.get("/test", async (req, res) => {
   }
 });
 
+app.get("/test2", async (req, res) => {
+  try {
+    const data = await hianime.getHomePage();
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
 app.listen(PORT, () => console.log(`Running on ${PORT}`));
