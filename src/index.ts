@@ -1,27 +1,33 @@
-import express, { urlencoded, json } from "express"
-import morgan from "morgan"
-import animeRoute from "./routes/animeRoute"
-import { errorHandler, notFound } from "./middlewares/errorMiddleware"
-import { cacheMiddleware } from "./middlewares/cacheMiddleware"
+import express from "express";
+import { HiAnime } from "aniwatch";
 
-const port = process.env.PORT || 5000
-const app = express()
+const app = express();
+const hianime = new HiAnime.Scraper();
+const PORT = process.env.PORT || 3000;
 
-app.use(urlencoded({ extended: true }))
-app.use(json())
-app.use(morgan("dev"))
+app.get("/", (req, res) => res.json({ msg: "Server is up and running" }));
 
-app.get("/", (req, res) => {
-  res.status(200).json({ msg: "Server is up and running" })
-})
+app.get("/search", async (req, res) => {
+  try {
+    const q = req.query.q as string;
+    const data = await hianime.search(q);
+    res.json(data);
+  } catch (e) { res.status(500).json({ error: "failed" }); }
+});
 
-app.use("/api/anime", cacheMiddleware, animeRoute)
+app.get("/episodes/:animeId", async (req, res) => {
+  try {
+    const data = await hianime.getEpisodes(req.params.animeId);
+    res.json(data);
+  } catch (e) { res.status(500).json({ error: "failed" }); }
+});
 
-app.use(notFound)
-app.use(errorHandler)
+app.get("/sources", async (req, res) => {
+  try {
+    const id = req.query.id as string;
+    const data = await hianime.getEpisodeSources(id, "hd-1", "sub");
+    res.json(data);
+  } catch (e) { res.status(500).json({ error: "failed" }); }
+});
 
-app.listen(port, () => {
-  console.log(`Server is listening at port ${port}`)
-})
-
-export { app }
+app.listen(PORT, () => console.log(`Running on ${PORT}`));
